@@ -96,6 +96,7 @@ class _HomePageState extends State<HomePage> {
         isExpanded: true, // Ensures the dropdown takes full width
         underline: Container(), // Removes default underline
         onChanged: (String? newValue) {
+          // Update the selected value but take no further action
           setState(() {
             _selectedDestination = newValue;
           });
