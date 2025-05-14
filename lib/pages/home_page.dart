@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:gomoon_flutter_app/widgets/custom_dropdown_button.dart'; // Import the CustomDropdownButton file
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  // State variables to hold the selected values
+  String? selectedStation;
+  String? selectedSeats;
+  String? selectedClass;
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +31,9 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _pageTitle(), // Centered title
-                  CustomDropdownButton(
-                    values: [
-                      'Johnson Webb Station',
-                      'Baraka Station',
-                    ], // Dropdown items
-                    width: deviceWidth * 0.8, // 80% of screen width
-                  ),
-                  _travellerDropdownWidget(deviceWidth), // Dropdown for number of travelers
-                  _bookRideWidget(deviceHeight), // Book ride widget
+                  _stationDropdown(deviceWidth), // Station dropdown
+                  _travellerDropdown(deviceWidth), // Dropdown for number of travelers and class
+                  _bookRideWidget(deviceHeight, deviceWidth), // Book ride widget
                 ],
               ),
               deviceHeight: deviceHeight,
@@ -66,16 +69,61 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Dropdown for station selection
+  Widget _stationDropdown(double deviceWidth) {
+    return CustomDropdownButton(
+      values: const ['Johnson Webb Station', 'Baraka Station'], // Station options
+      width: deviceWidth * 0.8, // 80% of screen width
+      placeholder: selectedStation ?? "Select a Station",
+      onChanged: (value) {
+        setState(() {
+          selectedStation = value;
+        });
+      },
+    );
+  }
+
+  /// Dropdowns for number of travelers and travel class
+  Widget _travellerDropdown(double deviceWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomDropdownButton(
+          values: const ['1', '2', '3', '4'], // Number of travelers
+          width: deviceWidth * 0.45, // 45% of screen width
+          placeholder: selectedSeats ?? "Select Seats",
+          onChanged: (value) {
+            setState(() {
+              selectedSeats = value;
+            });
+          },
+        ),
+        CustomDropdownButton(
+          values: const ['Economy', 'Business', 'First', 'Private'], // Travel class
+          width: deviceWidth * 0.40, // 40% of screen width
+          placeholder: selectedClass ?? "Select Class",
+          onChanged: (value) {
+            setState(() {
+              selectedClass = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   /// Widget for the book ride section
-  Widget _bookRideWidget(double deviceHeight) {
+  Widget _bookRideWidget(double deviceHeight, double deviceWidth) {
     return Container(
       height: deviceHeight * 0.25,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          Text(
+        children: [
+          const Text(
             "Book Your Ride Now!",
             style: TextStyle(
               fontSize: 25,
@@ -83,34 +131,43 @@ class HomePage extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          Text(
-            "Select your station and travel class to proceed.",
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.white70,
-            ),
-          ),
+          _rideButton(deviceHeight, deviceWidth),
         ],
       ),
     );
   }
 
-  /// Widget for the traveler dropdown (e.g., number of travelers)
-  Widget _travellerDropdownWidget(double deviceWidth) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        CustomDropdownButton(
-          values: const ['1', '2', '3', '4'], // Dropdown items
-          width: deviceWidth * 0.45, // 45% of screen width
+  /// Ride Button Widget
+  Widget _rideButton(double deviceHeight, double deviceWidth) {
+    return Container(
+      padding: EdgeInsets.only(bottom: deviceHeight * 0.01),
+      width: deviceWidth,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: MaterialButton(
+        onPressed: () {
+          // Add your booking logic here
+          if (selectedStation != null &&
+              selectedSeats != null &&
+              selectedClass != null) {
+            // Show confirmation or proceed
+            print("Station: $selectedStation, Seats: $selectedSeats, Class: $selectedClass");
+          } else {
+            // Show error or prompt user to select all options
+            print("Please select all required options.");
+          }
+        },
+        child: const Text(
+          "Book Ride!",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        CustomDropdownButton(
-          values: const ['Economy', 'Business', 'First', 'Private'], // Dropdown items
-          width: deviceWidth * 0.40, // 40% of screen width
-        ),
-      ],
+      ),
     );
   }
 
@@ -138,6 +195,48 @@ class HomePage extends StatelessWidget {
         ),
       ),
       child: child,
+    );
+  }
+}
+
+/// Updated `CustomDropdownButton` widget
+class CustomDropdownButton extends StatelessWidget {
+  final List<String> values;
+  final double width;
+  final String placeholder;
+  final Function(String?) onChanged;
+
+  const CustomDropdownButton({
+    super.key,
+    required this.values,
+    required this.width,
+    required this.placeholder,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: DropdownButton<String>(
+        value: values.contains(placeholder) ? placeholder : null,
+        hint: Text(placeholder),
+        items: values.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        isExpanded: true,
+        underline: Container(), // Remove underline
+      ),
     );
   }
 }
