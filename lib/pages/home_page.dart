@@ -22,22 +22,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          _astroImageWidget(), // Background image
+          _astroImageWidget(deviceHeight, deviceWidth), // Background image
+          _gradientOverlay(deviceHeight, deviceWidth), // Gradient overlay
           SafeArea(
-            child: _buildGradientContainer(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _pageTitle(), // Centered title
-                  _stationDropdown(deviceWidth), // Station dropdown
-                  _travellerDropdown(deviceWidth), // Dropdown for number of travelers and class
-                  _bookRideWidget(deviceHeight, deviceWidth), // Book ride widget
-                ],
-              ),
-              deviceHeight: deviceHeight,
-              deviceWidth: deviceWidth,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _pageTitle(), // Title at the top
+                _formSection(deviceWidth), // Form section for dropdowns
+                _bookRideWidget(deviceHeight, deviceWidth), // Book ride section
+              ],
             ),
           ),
         ],
@@ -47,19 +42,24 @@ class _HomePageState extends State<HomePage> {
 
   /// Widget for the page title
   Widget _pageTitle() {
-    return const Text(
-      "#GoMoon",
-      style: TextStyle(
-        fontSize: 70,
-        fontWeight: FontWeight.w800,
-        color: Colors.white,
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: Text(
+        "#GoMoon",
+        style: TextStyle(
+          fontSize: 70,
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+        ),
       ),
     );
   }
 
   /// Widget for the astronaut background image
-  Widget _astroImageWidget() {
+  Widget _astroImageWidget(double deviceHeight, double deviceWidth) {
     return Container(
+      height: deviceHeight,
+      width: deviceWidth,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/home_background.png'),
@@ -69,11 +69,44 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Widget for the gradient overlay
+  Widget _gradientOverlay(double deviceHeight, double deviceWidth) {
+    return Container(
+      height: deviceHeight,
+      width: deviceWidth,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color.fromRGBO(31, 31, 31, 0.8),
+            Color.fromRGBO(31, 31, 31, 0.5),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+    );
+  }
+
+  /// Form section for the dropdowns
+  Widget _formSection(double deviceWidth) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _stationDropdown(deviceWidth), // Station dropdown
+          const SizedBox(height: 20),
+          _travellerDropdown(deviceWidth), // Traveler and class dropdowns
+        ],
+      ),
+    );
+  }
+
   /// Dropdown for station selection
   Widget _stationDropdown(double deviceWidth) {
     return CustomDropdownButton(
       values: const ['Johnson Webb Station', 'Baraka Station'], // Station options
-      width: deviceWidth * 0.8, // 80% of screen width
+      width: deviceWidth * 0.9, // 90% of screen width
       placeholder: selectedStation ?? "Select a Station",
       onChanged: (value) {
         setState(() {
@@ -87,12 +120,10 @@ class _HomePageState extends State<HomePage> {
   Widget _travellerDropdown(double deviceWidth) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomDropdownButton(
           values: const ['1', '2', '3', '4'], // Number of travelers
-          width: deviceWidth * 0.45, // 45% of screen width
+          width: deviceWidth * 0.42, // 42% of screen width
           placeholder: selectedSeats ?? "Select Seats",
           onChanged: (value) {
             setState(() {
@@ -102,7 +133,7 @@ class _HomePageState extends State<HomePage> {
         ),
         CustomDropdownButton(
           values: const ['Economy', 'Business', 'First', 'Private'], // Travel class
-          width: deviceWidth * 0.40, // 40% of screen width
+          width: deviceWidth * 0.42, // 42% of screen width
           placeholder: selectedClass ?? "Select Class",
           onChanged: (value) {
             setState(() {
@@ -116,85 +147,42 @@ class _HomePageState extends State<HomePage> {
 
   /// Widget for the book ride section
   Widget _bookRideWidget(double deviceHeight, double deviceWidth) {
-    return Container(
-      height: deviceHeight * 0.25,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text(
-            "Book Your Ride Now!",
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Container(
+          height: deviceHeight * 0.1,
+          width: deviceWidth,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: MaterialButton(
+            onPressed: () {
+              // Add your booking logic here
+              if (selectedStation != null &&
+                  selectedSeats != null &&
+                  selectedClass != null) {
+                // Show confirmation or proceed
+                print(
+                    "Station: $selectedStation, Seats: $selectedSeats, Class: $selectedClass");
+              } else {
+                // Show error or prompt user to select all options
+                print("Please select all required options.");
+              }
+            },
+            child: const Text(
+              "Book Ride!",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          _rideButton(deviceHeight, deviceWidth),
-        ],
-      ),
-    );
-  }
-
-  /// Ride Button Widget
-  Widget _rideButton(double deviceHeight, double deviceWidth) {
-    return Container(
-      padding: EdgeInsets.only(bottom: deviceHeight * 0.01),
-      width: deviceWidth,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: MaterialButton(
-        onPressed: () {
-          // Add your booking logic here
-          if (selectedStation != null &&
-              selectedSeats != null &&
-              selectedClass != null) {
-            // Show confirmation or proceed
-            print("Station: $selectedStation, Seats: $selectedSeats, Class: $selectedClass");
-          } else {
-            // Show error or prompt user to select all options
-            print("Please select all required options.");
-          }
-        },
-        child: const Text(
-          "Book Ride!",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
-    );
-  }
-
-  /// Reusable method to create a gradient container
-  Widget _buildGradientContainer({
-    required Widget child,
-    required double deviceHeight,
-    required double deviceWidth,
-  }) {
-    return Container(
-      height: deviceHeight,
-      width: deviceWidth,
-      padding: EdgeInsets.symmetric(
-        vertical: deviceHeight * 0.1,
-        horizontal: deviceWidth * 0.05,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color.fromRGBO(31, 31, 31, 0.8),
-            Color.fromRGBO(31, 31, 31, 0.5),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: child,
     );
   }
 }
