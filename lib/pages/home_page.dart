@@ -1,49 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:gomoon_flutter_app/widgets/custom_dropdown_button.dart'; // Import the CustomDropdownButton file
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   late final double _deviceHeight, _deviceWidth;
-  String? _selectedDestination; // State variable for the dropdown
+
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     _deviceHeight = MediaQuery.of(context).size.height;
     _deviceWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Stack(
         children: [
           _astroImageWidget(), // Background image
           SafeArea(
-            child: Container(
-              height: _deviceHeight,
-              width: _deviceWidth,
-              padding: EdgeInsets.symmetric(
-                vertical: _deviceHeight * 0.1,
-                horizontal: _deviceWidth * 0.05,
-              ),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromRGBO(31, 31, 31, 0.8),
-                    Color.fromRGBO(31, 31, 31, 0.5),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
+            child: _buildGradientContainer(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _pageTitle(), // Centered title
-                  _destinationDropDownWidget(), // Dropdown widget
+                  CustomDropdownButton(
+                    values: [
+                      'Johnson Webb Station',
+                      'Baraka Station',
+                    ], // Dropdown items
+                    width: _deviceWidth * 0.8, // 80% of screen width
+                  ),
+                  _travellerDropdownWidget(), // Dropdown for number of travelers
                 ],
               ),
             ),
@@ -53,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Widget for the page title
   Widget _pageTitle() {
     return const Text(
       "#GoMoon",
@@ -64,6 +52,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  /// Widget for the astronaut background image
   Widget _astroImageWidget() {
     return Container(
       decoration: const BoxDecoration(
@@ -75,46 +64,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _destinationDropDownWidget() {
+  /// Widget for the traveler dropdown (e.g., number of travelers)
+  Widget _travellerDropdownWidget() {
+    return CustomDropdownButton(
+      values: const ['1', '2', '3', '4'], // Dropdown items
+      width: _deviceWidth * 0.45, // 45% of screen width
+    );
+  }
+
+  /// Reusable method to create a gradient container
+  Widget _buildGradientContainer({required Widget child}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[800], // Background color for the dropdown
-        borderRadius: BorderRadius.circular(10.0), // Rounded corners
-        border: Border.all(
-          color: Colors.white, // Border color
-          width: 1.0, // Border width
+      height: _deviceHeight,
+      width: _deviceWidth,
+      padding: EdgeInsets.symmetric(
+        vertical: _deviceHeight * 0.1,
+        horizontal: _deviceWidth * 0.05,
+      ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color.fromRGBO(31, 31, 31, 0.8),
+            Color.fromRGBO(31, 31, 31, 0.5),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
       ),
-      child: DropdownButton<String>(
-        value: _selectedDestination,
-        hint: const Text(
-          'Select Destination',
-          style: TextStyle(color: Colors.white),
-        ),
-        dropdownColor: Colors.black,
-        isExpanded: true, // Ensures the dropdown takes full width
-        underline: Container(), // Removes default underline
-        onChanged: (String? newValue) {
-          // Update the selected value but take no further action
-          setState(() {
-            _selectedDestination = newValue;
-          });
-        },
-        items: const [
-          DropdownMenuItem(
-            value: 'Johnson Webb Station',
-            child: Text(
-              'Johnson Webb Station',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          DropdownMenuItem(
-            value: 'Baraka Station',
-            child: Text('Baraka Station', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-      ),
+      child: child,
     );
   }
 }
