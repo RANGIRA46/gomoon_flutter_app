@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  late final double _deviceHeight, _deviceWidth;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-  HomePage({super.key});
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late final double _deviceHeight, _deviceWidth;
+  String? _selectedDestination; // State variable for the dropdown
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +41,8 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
-
                 children: [
                   _pageTitle(), // Centered title
-                  const SizedBox(
-                    height: 20,
-                  ), // Space between title and dropdown
                   _destinationDropDownWidget(), // Dropdown widget
                 ],
               ),
@@ -74,29 +76,44 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _destinationDropDownWidget() {
-    return DropdownButton<String>(
-      value: null, // Initial value of the dropdown
-      hint: const Text(
-        'Select Destination',
-        style: TextStyle(color: Colors.white),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[800], // Background color for the dropdown
+        borderRadius: BorderRadius.circular(10.0), // Rounded corners
+        border: Border.all(
+          color: Colors.white, // Border color
+          width: 1.0, // Border width
+        ),
       ),
-      dropdownColor: Colors.black,
-      onChanged: (String? newValue) {
-        // Handle selection change
-      },
-      items: const [
-        DropdownMenuItem(
-          value: 'Johnson Webb Station',
-          child: Text(
-            'Johnson Webb Station',
-            style: TextStyle(color: Colors.white),
+      child: DropdownButton<String>(
+        value: _selectedDestination,
+        hint: const Text(
+          'Select Destination',
+          style: TextStyle(color: Colors.white),
+        ),
+        dropdownColor: Colors.black,
+        isExpanded: true, // Ensures the dropdown takes full width
+        underline: Container(), // Removes default underline
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedDestination = newValue;
+          });
+        },
+        items: const [
+          DropdownMenuItem(
+            value: 'Johnson Webb Station',
+            child: Text(
+              'Johnson Webb Station',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-        ),
-        DropdownMenuItem(
-          value: 'Baraka Station',
-          child: Text('Baraka Station', style: TextStyle(color: Colors.white)),
-        ),
-      ], // Correctly set items as a list of DropdownMenuItem
+          DropdownMenuItem(
+            value: 'Baraka Station',
+            child: Text('Baraka Station', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
     );
   }
 }
