@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gomoon_flutter_app/widgets/custom_dropdown_button.dart'; // Import the CustomDropdownButton file
 
 class HomePage extends StatelessWidget {
-  late final double _deviceHeight, _deviceWidth;
-
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    _deviceHeight = MediaQuery.of(context).size.height;
-    _deviceWidth = MediaQuery.of(context).size.width;
+    // Initialize device dimensions within the build method
+    final double deviceHeight = MediaQuery.of(context).size.height;
+    final double deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Stack(
@@ -28,11 +27,13 @@ class HomePage extends StatelessWidget {
                       'Johnson Webb Station',
                       'Baraka Station',
                     ], // Dropdown items
-                    width: _deviceWidth * 0.8, // 80% of screen width
+                    width: deviceWidth * 0.8, // 80% of screen width
                   ),
-                  _travellerDropdownWidget(), // Dropdown for number of travelers
+                  _travellerDropdownWidget(deviceWidth), // Dropdown for number of travelers
                 ],
               ),
+              deviceHeight: deviceHeight,
+              deviceWidth: deviceWidth,
             ),
           ),
         ],
@@ -65,21 +66,25 @@ class HomePage extends StatelessWidget {
   }
 
   /// Widget for the traveler dropdown (e.g., number of travelers)
-  Widget _travellerDropdownWidget() {
+  Widget _travellerDropdownWidget(double deviceWidth) {
     return CustomDropdownButton(
       values: const ['1', '2', '3', '4'], // Dropdown items
-      width: _deviceWidth * 0.45, // 45% of screen width
+      width: deviceWidth * 0.45, // 45% of screen width
     );
   }
 
   /// Reusable method to create a gradient container
-  Widget _buildGradientContainer({required Widget child}) {
+  Widget _buildGradientContainer({
+    required Widget child,
+    required double deviceHeight,
+    required double deviceWidth,
+  }) {
     return Container(
-      height: _deviceHeight,
-      width: _deviceWidth,
+      height: deviceHeight,
+      width: deviceWidth,
       padding: EdgeInsets.symmetric(
-        vertical: _deviceHeight * 0.1,
-        horizontal: _deviceWidth * 0.05,
+        vertical: deviceHeight * 0.1,
+        horizontal: deviceWidth * 0.05,
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
