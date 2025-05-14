@@ -30,6 +30,7 @@ class HomePage extends StatelessWidget {
                     width: deviceWidth * 0.8, // 80% of screen width
                   ),
                   _travellerDropdownWidget(deviceWidth), // Dropdown for number of travelers
+                  _bookRideWidget(deviceHeight), // Book ride widget
                 ],
               ),
               deviceHeight: deviceHeight,
@@ -65,11 +66,51 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  /// Widget for the book ride section
+  Widget _bookRideWidget(double deviceHeight) {
+    return Container(
+      height: deviceHeight * 0.25,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: const [
+          Text(
+            "Book Your Ride Now!",
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            "Select your station and travel class to proceed.",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white70,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Widget for the traveler dropdown (e.g., number of travelers)
   Widget _travellerDropdownWidget(double deviceWidth) {
-    return CustomDropdownButton(
-      values: const ['1', '2', '3', '4'], // Dropdown items
-      width: deviceWidth * 0.45, // 45% of screen width
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomDropdownButton(
+          values: const ['1', '2', '3', '4'], // Dropdown items
+          width: deviceWidth * 0.45, // 45% of screen width
+        ),
+        CustomDropdownButton(
+          values: const ['Economy', 'Business', 'First', 'Private'], // Dropdown items
+          width: deviceWidth * 0.40, // 40% of screen width
+        ),
+      ],
     );
   }
 
